@@ -4,9 +4,9 @@ import "testing"
 
 func TestLog(t *testing.T) {
 	Debug("This is a debug message")
-	Info("This is an info message")
+	Info("This is", " an info message")
 	Warning("This is a warning message")
-	Error("This is an error message")
+	Error("This is", " an error message")
 	Fatal("This is a fatal message")
 
 	Debugf("This is a %s message", "debugf")

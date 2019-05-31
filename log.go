@@ -8,12 +8,13 @@ import (
 )
 
 var (
-	colorDebug    = color.New(color.FgBlack, color.Bold).SprintFunc()
-	colorInfo     = color.New(color.FgBlack, color.Bold).SprintFunc()
-	colorWarning  = color.New(color.FgBlack, color.Bold, color.BgHiYellow).SprintFunc()
-	colorError    = color.New(color.FgBlack, color.Bold, color.BgHiRed).SprintFunc()
-	colorFatal    = color.New(color.FgWhite, color.Bold, color.BgRed).SprintFunc()
-	messageFormat = "|%s| %v"
+	colorDebug        = color.New(color.FgBlack, color.Bold).SprintFunc()
+	colorInfo         = color.New(color.FgBlack, color.Bold).SprintFunc()
+	colorWarning      = color.New(color.FgBlack, color.Bold, color.BgHiYellow).SprintFunc()
+	colorError        = color.New(color.FgBlack, color.Bold, color.BgHiRed).SprintFunc()
+	colorFatal        = color.New(color.FgWhite, color.Bold, color.BgRed).SprintFunc()
+	messageFormat     = "|%s| %v"
+	unformattedFormat = "%s\n"
 )
 
 // Debugf prints debug message with given format
@@ -23,7 +24,7 @@ func Debugf(format string, v ...interface{}) {
 
 // Debug prints debug message
 func Debug(v ...interface{}) {
-	Debugf("%s\n", v...)
+	Debugf(unformattedFormat, v...)
 }
 
 // Infof prints info message with given format
@@ -33,7 +34,7 @@ func Infof(format string, v ...interface{}) {
 
 // Info prints info message
 func Info(v ...interface{}) {
-	Infof("%s\n", v...)
+	Infof(unformattedFormat, v...)
 }
 
 // Warningf prints warning message with given format
@@ -43,7 +44,7 @@ func Warningf(format string, v ...interface{}) {
 
 // Warning prints Warning message
 func Warning(v ...interface{}) {
-	Warningf("%s\n", v...)
+	Warningf(unformattedFormat, v...)
 }
 
 // Errorf prints error message with given format
@@ -53,7 +54,7 @@ func Errorf(format string, v ...interface{}) {
 
 // Error prints error message
 func Error(v ...interface{}) {
-	Errorf("%s\n", v...)
+	Errorf(unformattedFormat, v...)
 }
 
 // Fatalf prints fatal message with given format
@@ -63,10 +64,14 @@ func Fatalf(format string, v ...interface{}) {
 
 // Fatal prints fatal message
 func Fatal(v ...interface{}) {
-	Fatalf("%s\n", v...)
+	Fatalf(unformattedFormat, v...)
 }
 
 // Prints log message with given format and level
 func printf(level, format string, v ...interface{}) {
-	log.Printf(messageFormat, level, fmt.Sprintf(format, v...))
+	if format != unformattedFormat {
+		log.Printf(messageFormat, level, fmt.Sprintf(format, v...))
+	} else {
+		log.Printf(messageFormat+"\n", level, fmt.Sprint(v...))
+	}
 }
