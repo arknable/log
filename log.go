@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	colorDebug        = color.New(color.FgBlack, color.Bold).SprintFunc()
-	colorInfo         = color.New(color.FgBlack, color.Bold).SprintFunc()
-	colorWarning      = color.New(color.FgBlack, color.Bold, color.BgHiYellow).SprintFunc()
-	colorError        = color.New(color.FgBlack, color.Bold, color.BgHiRed).SprintFunc()
-	colorFatal        = color.New(color.FgWhite, color.Bold, color.BgRed).SprintFunc()
+	colorDebug        = color.New(color.Bold).SprintFunc()
+	colorInfo         = color.New(color.Bold).SprintFunc()
+	colorWarning      = color.New(color.Bold, color.BgYellow).SprintFunc()
+	colorError        = color.New(color.Bold, color.BgRed).SprintFunc()
+	colorFatal        = color.New(color.Bold, color.BgRed).SprintFunc()
 	messageFormat     = "|%s| %v"
 	unformattedFormat = "%s\n"
 )
