@@ -2,24 +2,28 @@ package log
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"os"
 
 	"github.com/fatih/color"
 )
 
 var (
-	colorDebug        = color.New(color.Bold).SprintFunc()
-	colorInfo         = color.New(color.Bold).SprintFunc()
-	colorWarning      = color.New(color.Bold, color.BgYellow).SprintFunc()
-	colorError        = color.New(color.Bold, color.BgRed).SprintFunc()
-	colorFatal        = color.New(color.Bold, color.BgRed).SprintFunc()
-	messageFormat     = "|%s| %v"
+	colorDebug        = color.New(color.Italic).SprintFunc()
+	colorInfo         = color.New(color.Reset).SprintFunc()
+	colorWarning      = color.New(color.Bold).SprintFunc()
+	colorError        = color.New(color.Bold).SprintFunc()
+	colorFatal        = color.New(color.Bold).SprintFunc()
+	messageFormat     = " -- %15s: %v"
 	unformattedFormat = "%s\n"
+	logger            *log.Logger
+	writer            io.Writer
 )
 
 // Debugf prints debug message with given format
 func Debugf(format string, v ...interface{}) {
-	printf(colorDebug("\tDEBUG\t"), format, v...)
+	printf(colorDebug("DEBUG"), format, v...)
 }
 
 // Debug prints debug message
@@ -29,7 +33,7 @@ func Debug(v ...interface{}) {
 
 // Infof prints info message with given format
 func Infof(format string, v ...interface{}) {
-	printf(colorInfo("\tINFO\t"), format, v...)
+	printf(colorInfo("INFO"), format, v...)
 }
 
 // Info prints info message
@@ -39,7 +43,7 @@ func Info(v ...interface{}) {
 
 // Warningf prints warning message with given format
 func Warningf(format string, v ...interface{}) {
-	printf(colorWarning("\tWARNING\t"), format, v...)
+	printf(colorWarning("WARNING"), format, v...)
 }
 
 // Warning prints Warning message
@@ -49,7 +53,7 @@ func Warning(v ...interface{}) {
 
 // Errorf prints error message with given format
 func Errorf(format string, v ...interface{}) {
-	printf(colorError("\tERROR\t"), format, v...)
+	printf(colorError("ERROR"), format, v...)
 }
 
 // Error prints error message
@@ -59,7 +63,7 @@ func Error(v ...interface{}) {
 
 // Fatalf prints fatal message with given format
 func Fatalf(format string, v ...interface{}) {
-	printf(colorFatal("\tFATAL\t"), format, v...)
+	printf(colorFatal("FATAL"), format, v...)
 }
 
 // Fatal prints fatal message
@@ -67,11 +71,27 @@ func Fatal(v ...interface{}) {
 	Fatalf(unformattedFormat, v...)
 }
 
+// SetOutput sets output writer
+func SetOutput(w io.Writer) {
+	writer = w
+}
+
 // Prints log message with given format and level
 func printf(level, format string, v ...interface{}) {
-	if format != unformattedFormat {
-		log.Printf(messageFormat, level, fmt.Sprintf(format, v...))
-	} else {
-		log.Printf(messageFormat+"\n", level, fmt.Sprint(v...))
+	if writer == nil {
+		writer = os.Stdout
 	}
+	if logger == nil {
+		logger = New()
+	}
+	if format != unformattedFormat {
+		logger.Printf(messageFormat, level, fmt.Sprintf(format, v...))
+	} else {
+		logger.Printf(messageFormat+"\n", level, fmt.Sprint(v...))
+	}
+}
+
+// New creates new logger
+func New() *log.Logger {
+	return log.New(writer, "", log.LstdFlags)
 }
