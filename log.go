@@ -104,7 +104,7 @@ func Release() {
 		queue = nil
 	}()
 	for _, m := range queue {
-		log.Printf(m.Format, m.Level, m.Message)
+		logger.Printf(m.Format, m.Level, m.Message)
 	}
 }
 
@@ -129,7 +129,7 @@ func printf(level, format string, v ...interface{}) {
 		queue = append(queue, msg)
 		return
 	}
-	log.Printf(msg.Format, msg.Level, msg.Message)
+	logger.Printf(msg.Format, msg.Level, msg.Message)
 }
 
 // New creates new logger
