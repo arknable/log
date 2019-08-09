@@ -26,7 +26,10 @@ func TestLogFile(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer logFile.Close()
+	defer func() {
+		logFile.Close()
+		os.Remove("test.log")
+	}()
 
 	SetOutput(io.MultiWriter(os.Stdout, logFile))
 	TestLog(t)
