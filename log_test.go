@@ -1,8 +1,8 @@
 package log
 
 import (
+	"fmt"
 	"io"
-	"log"
 	"os"
 	"testing"
 	"time"
@@ -25,7 +25,7 @@ func TestLog(t *testing.T) {
 func TestLogFile(t *testing.T) {
 	logFile, err := os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	defer func() {
 		logFile.Close()
@@ -39,7 +39,7 @@ func TestLogFile(t *testing.T) {
 func TestLock(t *testing.T) {
 	logFile, err := os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	defer func() {
 		logFile.Close()
@@ -62,4 +62,32 @@ func TestLock(t *testing.T) {
 	time.Sleep(3 * time.Second)
 	SetOutput(os.Stdout)
 	time.Sleep(30 * time.Second)
+}
+
+func TestHold(t *testing.T) {
+	Debug("Before Hold() called")
+
+	Hold()
+
+	Debug("This is a debug message")
+	Info("This is", " an info message")
+	Warning("This is a warning message")
+	Error("This is", " an error message")
+	Fatal("This is a fatal message")
+
+	Debugf("This is a %s message", "debugf")
+	Infof("This is an %s message", "infof")
+	Warningf("This is a %s message", "warningf")
+	Errorf("This is an %s message", "errorf")
+	Fatalf("This is a %s message", "fatalf")
+
+	for i := 0; i < 5; i++ {
+		fmt.Println("Waiting ...")
+		time.Sleep(1 * time.Second)
+	}
+
+	fmt.Println("Call Release()")
+	Release()
+
+	Debug("After Release() called")
 }

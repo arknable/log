@@ -21,7 +21,15 @@ var (
 	logger            *log.Logger
 	writer            io.Writer
 	lock              sync.Mutex
+	queue             []*message
 )
+
+type message struct {
+	IsFormatted bool
+	Format      string
+	Level       string
+	Message     string
+}
 
 // Debugf prints debug message with given format
 func Debugf(format string, v ...interface{}) {
@@ -83,22 +91,53 @@ func SetOutput(w io.Writer) {
 	}
 }
 
+// Hold puts log messages in a queueu, make sure to call Release() to write the messages
+func Hold() {
+	queue = make([]*message, 0)
+}
+
+// Release writes queued messages.
+// If something wrong happen during message writing,
+// this function will make sure queue set to nil upon return.
+func Release() {
+	defer func() {
+		queue = nil
+	}()
+	for _, m := range queue {
+		log.Printf(m.Format, m.Level, m.Message)
+	}
+}
+
 // Prints log message with given format and level
 func printf(level, format string, v ...interface{}) {
-	if logger == nil {
-		logger = New()
-	}
-	if format != unformattedFormat {
-		logger.Printf(messageFormat, level, fmt.Sprintf(format, v...))
+	var msg *message
+	if format == unformattedFormat {
+		msg = &message{
+			Format:  messageFormat + "\n",
+			Level:   level,
+			Message: fmt.Sprint(v...),
+		}
 	} else {
-		logger.Printf(messageFormat+"\n", level, fmt.Sprint(v...))
+		msg = &message{
+			IsFormatted: true,
+			Format:      messageFormat,
+			Level:       level,
+			Message:     fmt.Sprintf(format, v...),
+		}
 	}
+	if queue != nil {
+		queue = append(queue, msg)
+		return
+	}
+	log.Printf(msg.Format, msg.Level, msg.Message)
 }
 
 // New creates new logger
 func New() *log.Logger {
-	if writer == nil {
-		writer = os.Stdout
-	}
 	return log.New(writer, "", log.LstdFlags)
+}
+
+func init() {
+	writer = os.Stdout
+	logger = New()
 }
