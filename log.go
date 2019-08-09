@@ -78,9 +78,6 @@ func SetOutput(w io.Writer) {
 
 // Prints log message with given format and level
 func printf(level, format string, v ...interface{}) {
-	if writer == nil {
-		writer = os.Stdout
-	}
 	if logger == nil {
 		logger = New()
 	}
@@ -93,5 +90,8 @@ func printf(level, format string, v ...interface{}) {
 
 // New creates new logger
 func New() *log.Logger {
+	if writer == nil {
+		writer = os.Stdout
+	}
 	return log.New(writer, "", log.LstdFlags)
 }
