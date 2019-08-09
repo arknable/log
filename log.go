@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/fatih/color"
 )
@@ -19,6 +20,7 @@ var (
 	unformattedFormat = "%s\n"
 	logger            *log.Logger
 	writer            io.Writer
+	lock              sync.Mutex
 )
 
 // Debugf prints debug message with given format
@@ -73,7 +75,12 @@ func Fatal(v ...interface{}) {
 
 // SetOutput sets output writer
 func SetOutput(w io.Writer) {
+	lock.Lock()
+	defer lock.Unlock()
 	writer = w
+	if logger != nil {
+		logger.SetOutput(writer)
+	}
 }
 
 // Prints log message with given format and level

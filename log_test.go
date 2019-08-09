@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestLog(t *testing.T) {
@@ -33,4 +34,32 @@ func TestLogFile(t *testing.T) {
 
 	SetOutput(io.MultiWriter(os.Stdout, logFile))
 	TestLog(t)
+}
+
+func TestLock(t *testing.T) {
+	logFile, err := os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		logFile.Close()
+		os.Remove("test.log")
+	}()
+	go func() {
+		for i := 1; i <= 10; i++ {
+			Debug("Message A.", i)
+			time.Sleep(1 * time.Second)
+		}
+	}()
+	go func() {
+		for i := 1; i <= 10; i++ {
+			Debug("Message B.", i)
+			time.Sleep(1 * time.Second)
+		}
+	}()
+	time.Sleep(3 * time.Second)
+	SetOutput(logFile)
+	time.Sleep(3 * time.Second)
+	SetOutput(os.Stdout)
+	time.Sleep(30 * time.Second)
 }
