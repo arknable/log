@@ -12,6 +12,11 @@ func init() {
 	logger = New()
 }
 
+// DefaultLogger returns default logger
+func DefaultLogger() *Logger {
+	return logger
+}
+
 // Debugf is bridge for Logger.Debugf of default logger
 func Debugf(format string, v ...interface{}) {
 	logger.Debugf(format, v...)
