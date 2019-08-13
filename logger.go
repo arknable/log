@@ -41,7 +41,7 @@ type Logger struct {
 func New() *Logger {
 	return &Logger{
 		Logger:  golog.New(os.Stdout, "", golog.LstdFlags),
-		writers: make([]io.Writer, 0),
+		writers: []io.Writer{os.Stdout},
 	}
 }
 
