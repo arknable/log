@@ -51,6 +51,8 @@ func (l *Logger) SetOutput(w ...io.Writer) {
 	defer l.lock.Unlock()
 	l.writers = w
 
+	fmt.Println("Outputs: ", len(l.writers))
+
 	var writer io.Writer
 	if len(l.writers) > 1 {
 		writer = io.MultiWriter(l.writers...)
