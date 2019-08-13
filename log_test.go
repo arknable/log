@@ -93,7 +93,9 @@ func TestHold(t *testing.T) {
 }
 
 func TestInstance(t *testing.T) {
-	logFile, err := os.OpenFile("test-instance.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logger := New()
+
+	logFile, err := logger.AddFileOutput("test-instance.log")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -101,9 +103,6 @@ func TestInstance(t *testing.T) {
 		logFile.Close()
 		os.Remove("test-instance.log")
 	}()
-
-	logger := New()
-	logger.SetOutput(io.MultiWriter(os.Stdout, logFile))
 
 	logger.Debug("Debug from new instance")
 	logger.Info("Info from new instance")

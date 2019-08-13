@@ -7,6 +7,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/arknable/errors"
 	"github.com/fatih/color"
 )
 
@@ -31,24 +32,45 @@ type message struct {
 // Logger is a wrapper for Go's standard logger
 type Logger struct {
 	*golog.Logger
-	lock   sync.Mutex
-	queue  []*message
-	writer io.Writer
+	lock    sync.Mutex
+	queue   []*message
+	writers []io.Writer
 }
 
 // New creates new logger
 func New() *Logger {
 	return &Logger{
-		Logger: golog.New(os.Stdout, "", golog.LstdFlags),
+		Logger:  golog.New(os.Stdout, "", golog.LstdFlags),
+		writers: make([]io.Writer, 0),
 	}
 }
 
 // SetOutput sets output writer
-func (l *Logger) SetOutput(w io.Writer) {
+func (l *Logger) SetOutput(w ...io.Writer) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
-	l.writer = w
-	l.Logger = golog.New(l.writer, "", golog.LstdFlags)
+	l.writers = w
+
+	var writer io.Writer
+	if len(l.writers) > 1 {
+		writer = io.MultiWriter(l.writers...)
+	} else if len(l.writers) == 1 {
+		writer = l.writers[0]
+	} else {
+		writer = os.Stdout
+	}
+	l.Logger = golog.New(writer, "", golog.LstdFlags)
+}
+
+// AddFileOutput add output to file with given name
+func (l *Logger) AddFileOutput(filePath string) (*os.File, error) {
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		return nil, errors.Wrap(err)
+	}
+	l.writers = append(l.writers, file)
+	l.SetOutput(l.writers...)
+	return file, nil
 }
 
 // Hold puts log messages in a queueu, make sure to call Release() to write the messages

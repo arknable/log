@@ -1,6 +1,9 @@
 package log
 
-import "io"
+import (
+	"io"
+	"os"
+)
 
 // Default logger
 var logger *Logger
@@ -60,8 +63,13 @@ func Fatal(v ...interface{}) {
 }
 
 // SetOutput is bridge for Logger.SetOutput of default logger
-func SetOutput(w io.Writer) {
-	logger.SetOutput(w)
+func SetOutput(w ...io.Writer) {
+	logger.SetOutput(w...)
+}
+
+// AddFileOutput is bridge for Logger.AddFileOutput of default logger
+func AddFileOutput(filePath string) (*os.File, error) {
+	return logger.AddFileOutput(filePath)
 }
 
 // Hold is bridge for Logger.Hold of default logger
