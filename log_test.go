@@ -37,13 +37,13 @@ func TestLogFile(t *testing.T) {
 }
 
 func TestLock(t *testing.T) {
-	logFile, err := os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logFile, err := os.OpenFile("test-lock.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer func() {
 		logFile.Close()
-		os.Remove("test.log")
+		os.Remove("test-lock.log")
 	}()
 	go func() {
 		for i := 1; i <= 10; i++ {
@@ -90,4 +90,23 @@ func TestHold(t *testing.T) {
 	Release()
 
 	Debug("After Release() called")
+}
+
+func TestInstance(t *testing.T) {
+	logFile, err := os.OpenFile("test-instance.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		logFile.Close()
+		os.Remove("test-instance.log")
+	}()
+
+	logger := New()
+	logger.SetOutput(io.MultiWriter(os.Stdout, logFile))
+
+	logger.Debug("Debug from new instance")
+	logger.Info("Info from new instance")
+	logger.Warningf("Warningf %s new instance", "from")
+	logger.Errorf("Errorf from %s", "new instance")
 }
