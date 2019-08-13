@@ -110,3 +110,21 @@ func TestInstance(t *testing.T) {
 	logger.Warningf("Warningf %s new instance", "from")
 	logger.Errorf("Errorf from %s", "new instance")
 }
+
+/*func TestLargeFile(t *testing.T) {
+	logFile, err := os.OpenFile("test-large.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		logFile.Close()
+		os.Remove("test-large.log")
+	}()
+
+	SetOutput(io.MultiWriter(os.Stdout, logFile))
+
+	for i := 0; i < 10000; i++ {
+		Debug("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+		time.Sleep(10 * time.Millisecond)
+	}
+}*/
