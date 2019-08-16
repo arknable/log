@@ -18,7 +18,7 @@ var (
 	colorError   = color.New(color.Bold).SprintFunc()
 	colorFatal   = color.New(color.Bold).SprintFunc()
 
-	messageFormat     = " -- %15s: %v"
+	messageFormat     = "|%-15s| %v"
 	unformattedFormat = "%s\n"
 )
 
@@ -33,7 +33,6 @@ type message struct {
 type Logger struct {
 	*golog.Logger
 	lock    sync.Mutex
-	queue   []*message
 	writers []io.Writer
 }
 
@@ -71,23 +70,6 @@ func (l *Logger) AddFileOutput(filePath string) (*os.File, error) {
 	l.writers = append(l.writers, file)
 	l.SetOutput(l.writers...)
 	return file, nil
-}
-
-// Hold puts log messages in a queueu, make sure to call Release() to write the messages
-func (l *Logger) Hold() {
-	l.queue = make([]*message, 0)
-}
-
-// Release writes queued messages.
-// If something wrong happen during message writing,
-// this function will make sure queue set to nil upon return.
-func (l *Logger) Release() {
-	defer func() {
-		l.queue = nil
-	}()
-	for _, m := range l.queue {
-		l.Printf(m.Format, m.Level, m.Message)
-	}
 }
 
 // Debugf prints debug message with given format
@@ -156,10 +138,6 @@ func (l *Logger) printf(level, format string, v ...interface{}) {
 			Level:       level,
 			Message:     fmt.Sprintf(format, v...),
 		}
-	}
-	if l.queue != nil {
-		l.queue = append(l.queue, msg)
-		return
 	}
 	l.Printf(msg.Format, msg.Level, msg.Message)
 }

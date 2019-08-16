@@ -76,13 +76,3 @@ func SetOutput(w ...io.Writer) {
 func AddFileOutput(filePath string) (*os.File, error) {
 	return logger.AddFileOutput(filePath)
 }
-
-// Hold is bridge for Logger.Hold of default logger
-func Hold() {
-	logger.Hold()
-}
-
-// Release is bridge for Logger.Release of default logger
-func Release() {
-	logger.Release()
-}
