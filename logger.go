@@ -18,7 +18,7 @@ var (
 	colorError   = color.New(color.Bold).SprintFunc()
 	colorFatal   = color.New(color.Bold).SprintFunc()
 
-	messageFormat     = "|%-15s| %v"
+	messageFormat     = "%15s | %v"
 	unformattedFormat = "%s\n"
 )
 
