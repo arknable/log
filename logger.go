@@ -122,6 +122,11 @@ func (l *Logger) Fatal(v ...interface{}) {
 	l.Fatalf(unformattedFormat, v...)
 }
 
+// Logf mapped to Infof for compatibility with Segment's Logger
+func (l *Logger) Logf(format string, v ...interface{}) {
+	l.Infof(format, v...)
+}
+
 // Prints log message with given format and level
 func (l *Logger) printf(level, format string, v ...interface{}) {
 	var msg *message
