@@ -53,7 +53,8 @@ type Logger struct {
 	*golog.Logger
 	Options
 
-	lock sync.Mutex
+	lock               sync.Mutex
+	currentFileOutName string
 }
 
 // New creates new logger
@@ -80,7 +81,8 @@ func (l *Logger) writers() (io.Writer, error) {
 				return nil, errors.Wrap(err)
 			}
 		}
-		filePath := filepath.Join(l.FileOutputFolder, fileName(l))
+		l.currentFileOutName = fileName(l)
+		filePath := filepath.Join(l.FileOutputFolder, l.currentFileOutName)
 		file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			return nil, errors.Wrap(err)
