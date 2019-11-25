@@ -1,19 +1,24 @@
 package log
 
 import (
-	"io"
-	"os"
+	golog "log"
+
+	"github.com/arknable/errors"
 )
 
 // Default logger
 var logger *Logger
 
 func init() {
-	logger = New()
+	l, err := New(Options{})
+	if err != nil {
+		golog.Fatal(errors.Wrap(err))
+	}
+	logger = l
 }
 
-// DefaultLogger returns default logger
-func DefaultLogger() *Logger {
+// Default returns default logger
+func Default() *Logger {
 	return logger
 }
 
@@ -65,14 +70,4 @@ func Fatalf(format string, v ...interface{}) {
 // Fatal is bridge for Logger.Fatal of default logger
 func Fatal(v ...interface{}) {
 	logger.Fatal(v...)
-}
-
-// SetOutput is bridge for Logger.SetOutput of default logger
-func SetOutput(w ...io.Writer) {
-	logger.SetOutput(w...)
-}
-
-// AddFileOutput is bridge for Logger.AddFileOutput of default logger
-func AddFileOutput(filePath string) (*os.File, error) {
-	return logger.AddFileOutput(filePath)
 }

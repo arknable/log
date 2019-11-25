@@ -5,7 +5,9 @@ import (
 	"io"
 	golog "log"
 	"os"
+	"path/filepath"
 	"sync"
+	"time"
 
 	"github.com/arknable/errors"
 	"github.com/fatih/color"
@@ -29,47 +31,67 @@ type message struct {
 	Message     string
 }
 
+const fileOutputExt = ".log"
+
+// Options is configurable aspects of a Logger
+type Options struct {
+	// DisableStdOutput removes standard output
+	DisableStdOutput bool
+
+	// EnableFileOutput writes message to file
+	EnableFileOutput bool
+
+	// FileOutputFolder is path to folder where log files should be kept
+	FileOutputFolder string
+
+	// FileOutputName is the name of log file
+	FileOutputName string
+}
+
 // Logger is a wrapper for Go's standard logger
 type Logger struct {
 	*golog.Logger
-	lock    sync.Mutex
-	writers []io.Writer
+	Options
+
+	lock sync.Mutex
 }
 
 // New creates new logger
-func New() *Logger {
-	return &Logger{
-		Logger:  golog.New(os.Stdout, "", golog.LstdFlags),
-		writers: []io.Writer{os.Stdout},
+func New(opts Options) (*Logger, error) {
+	l := &Logger{
+		Options: opts,
 	}
-}
-
-// SetOutput sets output writer
-func (l *Logger) SetOutput(w ...io.Writer) {
-	l.lock.Lock()
-	defer l.lock.Unlock()
-	l.writers = w
-
-	var writer io.Writer
-	if len(l.writers) > 1 {
-		writer = io.MultiWriter(l.writers...)
-	} else if len(l.writers) == 1 {
-		writer = l.writers[0]
-	} else {
-		writer = os.Stdout
-	}
-	l.Logger = golog.New(writer, "", golog.LstdFlags)
-}
-
-// AddFileOutput add output to file with given name
-func (l *Logger) AddFileOutput(filePath string) (*os.File, error) {
-	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	writers, err := l.writers()
 	if err != nil {
 		return nil, errors.Wrap(err)
 	}
-	l.writers = append(l.writers, file)
-	l.SetOutput(l.writers...)
-	return file, nil
+	l.Logger = golog.New(writers, "", golog.LstdFlags)
+	return l, nil
+}
+
+func (l *Logger) writers() (io.Writer, error) {
+	w := make([]io.Writer, 0)
+	if !l.DisableStdOutput {
+		w = append(w, os.Stdout)
+	}
+	if l.EnableFileOutput {
+		if len(l.FileOutputFolder) > 0 {
+			if err := os.MkdirAll(l.FileOutputFolder, os.ModePerm); err != nil {
+				return nil, errors.Wrap(err)
+			}
+		}
+		filePath := filepath.Join(l.FileOutputFolder, fileName(l))
+		file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			return nil, errors.Wrap(err)
+		}
+		w = append(w, file)
+	}
+	return io.MultiWriter(w...), nil
+}
+
+func fileName(l *Logger) string {
+	return fmt.Sprintf("%s_%s%s", l.FileOutputName, time.Now().Format("20060102"), fileOutputExt)
 }
 
 // Debugf prints debug message with given format
