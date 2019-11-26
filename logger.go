@@ -12,7 +12,10 @@ import (
 	"github.com/arknable/errors"
 )
 
-const fileOutputExt = ".log"
+const (
+	fileOutputExt = ".log"
+	fatalLevel    = "FATAL"
+)
 
 // Options is configurable aspects of a Logger
 type Options struct {
@@ -119,7 +122,7 @@ func (l *Logger) Error(v ...interface{}) {
 
 // Fatalf prints fatal message with given format
 func (l *Logger) Fatalf(format string, v ...interface{}) {
-	l.printf(colorFatal("FATAL"), format, v...)
+	l.printf(colorFatal(fatalLevel), format, v...)
 }
 
 // Fatal prints fatal message

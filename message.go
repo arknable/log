@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/fatih/color"
 )
@@ -42,4 +43,7 @@ func (l *Logger) printf(level, format string, v ...interface{}) {
 		}
 	}
 	l.Printf(msg.Format, msg.Level, msg.Message)
+	if level == fatalLevel {
+		os.Exit(1)
+	}
 }
