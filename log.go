@@ -22,6 +22,16 @@ func Default() *Logger {
 	return logger
 }
 
+// NewDefault creates new default logger
+func NewDefault(opts Options) error {
+	l, err := New(opts)
+	if err != nil {
+		return errors.Wrap(err)
+	}
+	logger = l
+	return nil
+}
+
 // Debugf is bridge for Logger.Debugf of default logger
 func Debugf(format string, v ...interface{}) {
 	logger.Debugf(format, v...)

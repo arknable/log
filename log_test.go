@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func testLog(l *Logger) {
@@ -58,4 +60,22 @@ func TestFileOutputFolder(t *testing.T) {
 		}
 	}()
 	testLog(l)
+}
+
+func TestNewDefault(t *testing.T) {
+	assert.False(t, logger.DisableStdOutput)
+	assert.False(t, logger.EnableFileOutput)
+	assert.Equal(t, "", logger.FileOutputFolder)
+	assert.Equal(t, "", logger.FileOutputName)
+
+	err := NewDefault(Options{
+		DisableStdOutput: true,
+		FileOutputFolder: "foolder",
+		FileOutputName:   "foo",
+	})
+	assert.Nil(t, err)
+	assert.True(t, logger.DisableStdOutput)
+	assert.False(t, logger.EnableFileOutput)
+	assert.Equal(t, "foolder", logger.FileOutputFolder)
+	assert.Equal(t, "foo", logger.FileOutputName)
 }
