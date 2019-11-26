@@ -15,6 +15,8 @@ var (
 	colorError   = color.New(color.Bold).SprintFunc()
 	colorFatal   = color.New(color.Bold).SprintFunc()
 
+	coloredFatalLevel = colorFatal(fatalLevel)
+
 	messageFormat     = "%15s | %v"
 	unformattedFormat = "%s\n"
 )
@@ -28,20 +30,16 @@ type message struct {
 
 // Prints log message with given format and level
 func (l *Logger) printf(level, format string, v ...interface{}) {
-	var msg *message
+	var (
+		msg       string
+		msgFormat = messageFormat
+	)
+
 	if format == unformattedFormat {
-		msg = &message{
-			Format:  messageFormat + "\n",
-			Level:   level,
-			Message: fmt.Sprint(v...),
-		}
+		msgFormat = msgFormat + "\n"
+		msg = fmt.Sprint(v...)
 	} else {
-		msg = &message{
-			IsFormatted: true,
-			Format:      messageFormat,
-			Level:       level,
-			Message:     fmt.Sprintf(format, v...),
-		}
+		msg = fmt.Sprintf(format, v...)
 	}
 
 	if l.EnableFileOutput {
@@ -55,9 +53,9 @@ func (l *Logger) printf(level, format string, v ...interface{}) {
 		}
 	}
 
-	l.Printf(msg.Format, msg.Level, msg.Message)
+	l.Printf(msgFormat, level, msg)
 
-	if level == colorFatal(fatalLevel) {
+	if level == coloredFatalLevel {
 		os.Exit(1)
 	}
 }
