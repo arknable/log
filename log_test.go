@@ -78,8 +78,25 @@ func TestNewDefault(t *testing.T) {
 	assert.Equal(t, "foo", logger.FileOutputName)
 }
 
+/* Manual tests */
 // func TestFatalLevel(t *testing.T) {
 // 	t.Log("Before log.Fatal")
 // 	log.Fatal("This is fatal error")
 // 	t.Log("After log.Fatal, this should not be diplayed")
+// }
+
+// func TestDailyFileChange(t *testing.T) {
+// 	l, err := New(Options{
+// 		EnableFileOutput: true,
+// 		FileOutputFolder: "log",
+// 		FileOutputName:   "test",
+// 	})
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+
+// 	for {
+// 		l.Debug("Test debug message")
+// 		time.Sleep(500 * time.Millisecond)
+// 	}
 // }

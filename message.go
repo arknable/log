@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/arknable/errors"
 	"github.com/fatih/color"
 )
 
@@ -42,7 +43,20 @@ func (l *Logger) printf(level, format string, v ...interface{}) {
 			Message:     fmt.Sprintf(format, v...),
 		}
 	}
+
+	if l.EnableFileOutput {
+		fname := fileName(l)
+		if fname != l.currentFileOutName {
+			writers, err := l.writers()
+			if err != nil {
+				Fatal(errors.Wrap(err))
+			}
+			l.SetOutput(writers)
+		}
+	}
+
 	l.Printf(msg.Format, msg.Level, msg.Message)
+
 	if level == colorFatal(fatalLevel) {
 		os.Exit(1)
 	}
