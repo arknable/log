@@ -43,7 +43,7 @@ func (l *Logger) printf(level, format string, v ...interface{}) {
 		}
 	}
 	l.Printf(msg.Format, msg.Level, msg.Message)
-	if level == fatalLevel {
+	if level == colorFatal(fatalLevel) {
 		os.Exit(1)
 	}
 }
