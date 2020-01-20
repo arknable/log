@@ -42,9 +42,12 @@ type Logger struct {
 }
 
 // New creates new logger
-func New(opts Options) (*Logger, error) {
-	l := &Logger{
-		Options: opts,
+func New(opts *Options) (*Logger, error) {
+	l := &Logger{}
+	if opts != nil {
+		l.Options = *opts
+	} else {
+		l.Options = Options{}
 	}
 	writers, err := l.writers()
 	if err != nil {

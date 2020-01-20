@@ -10,7 +10,7 @@ import (
 var logger *Logger
 
 func init() {
-	l, err := New(Options{})
+	l, err := New(nil)
 	if err != nil {
 		golog.Fatal(errors.Wrap(err))
 	}
@@ -23,7 +23,7 @@ func Default() *Logger {
 }
 
 // NewDefault creates new default logger
-func NewDefault(opts Options) error {
+func NewDefault(opts *Options) error {
 	l, err := New(opts)
 	if err != nil {
 		return errors.Wrap(err)

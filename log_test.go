@@ -22,7 +22,7 @@ func testLog(l *Logger) {
 }
 
 func TestFileOutput(t *testing.T) {
-	l, err := New(Options{
+	l, err := New(&Options{
 		EnableFileOutput: true,
 		FileOutputName:   "test",
 	})
@@ -44,7 +44,7 @@ func TestFileOutput(t *testing.T) {
 }
 
 func TestFileOutputFolder(t *testing.T) {
-	l, err := New(Options{
+	l, err := New(&Options{
 		EnableFileOutput: true,
 		FileOutputFolder: "log",
 		FileOutputName:   "test",
@@ -66,7 +66,7 @@ func TestNewDefault(t *testing.T) {
 	assert.Equal(t, "", logger.FileOutputFolder)
 	assert.Equal(t, "", logger.FileOutputName)
 
-	err := NewDefault(Options{
+	err := NewDefault(&Options{
 		DisableStdOutput: true,
 		FileOutputFolder: "foolder",
 		FileOutputName:   "foo",
