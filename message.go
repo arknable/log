@@ -3,19 +3,32 @@ package log
 import (
 	"fmt"
 	"os"
-
+	"strings"
+	
 	"github.com/arknable/errors"
 	"github.com/fatih/color"
 )
 
-var (
-	colorDebug   = color.New(color.Italic).SprintFunc()
-	colorInfo    = color.New(color.Reset).SprintFunc()
-	colorWarning = color.New(color.Bold).SprintFunc()
-	colorError   = color.New(color.Bold).SprintFunc()
-	colorFatal   = color.New(color.Bold).SprintFunc()
+// Level is the level of this message
+type Level string
 
-	coloredFatalLevel = colorFatal(fatalLevel)
+// String returns string representation of this level
+func (l Level) String() string {
+	return (string) (l)
+}
+
+const (
+	DebugLevel   = "DEBUG"
+	InfoLevel    = "INFO"
+	WarningLevel = "WARNING"
+	ErrorLevel   = "ERROR"
+	FatalLevel   = "FATAL"
+)
+
+var (
+	italicStyle = color.New(color.Italic).SprintFunc()
+	boldStyle   = color.New(color.Bold).SprintFunc()
+	normalStyle = color.New(color.Reset).SprintFunc()
 
 	messageFormat     = "%15s | %v"
 	unformattedFormat = "%s\n"
@@ -29,7 +42,7 @@ type message struct {
 }
 
 // Prints log message with given format and level
-func (l *Logger) printf(level, format string, v ...interface{}) {
+func (l *Logger) printf(level Level, format string, v ...interface{}) {
 	var (
 		msg       string
 		msgFormat = messageFormat
@@ -52,10 +65,16 @@ func (l *Logger) printf(level, format string, v ...interface{}) {
 			l.SetOutput(writers)
 		}
 	}
+	
+	levelString := normalStyle(level.String())
+	if level == ErrorLevel || level == FatalLevel {
+		levelString = boldStyle(level.String())
+	} else if level == DebugLevel {
+		levelString = italicStyle(level.String())
+	}
+	l.Printf(msgFormat, strings.Trim(levelString, " "), msg)
 
-	l.Printf(msgFormat, level, msg)
-
-	if level == coloredFatalLevel {
+	if level == FatalLevel {
 		os.Exit(1)
 	}
 }
