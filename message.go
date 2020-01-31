@@ -3,7 +3,6 @@ package log
 import (
 	"fmt"
 	"os"
-	"strings"
 	
 	"github.com/arknable/errors"
 	"github.com/fatih/color"
@@ -72,7 +71,7 @@ func (l *Logger) write(level Level, format string, v ...interface{}) {
 	} else if level == DebugLevel {
 		levelString = italicStyle(level.String())
 	}
-	l.Printf(msgFormat, strings.Trim(levelString, " "), msg)
+	l.Printf(msgFormat, levelString, msg)
 
 	if level == FatalLevel {
 		os.Exit(1)
