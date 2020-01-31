@@ -42,7 +42,7 @@ type message struct {
 }
 
 // Prints log message with given format and level
-func (l *Logger) printf(level Level, format string, v ...interface{}) {
+func (l *Logger) write(level Level, format string, v ...interface{}) {
 	var (
 		msg       string
 		msgFormat = messageFormat
