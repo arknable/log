@@ -33,13 +33,6 @@ var (
 	unformattedFormat = "%s\n"
 )
 
-type message struct {
-	IsFormatted bool
-	Format      string
-	Level       string
-	Message     string
-}
-
 // Prints log message with given format and level
 func (l *Logger) write(level Level, format string, v ...interface{}) {
 	var (
