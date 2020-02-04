@@ -1,5 +1,9 @@
 package log
 
+import (
+	"github.com/arknable/errors"
+)
+
 // Default logger
 var logger *Logger
 
