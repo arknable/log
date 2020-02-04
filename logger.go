@@ -12,10 +12,7 @@ import (
 	"github.com/arknable/errors"
 )
 
-const (
-	fileOutputExt = ".log"
-	fatalLevel    = "FatalLevel"
-)
+const fileOutputExt = ".log"
 
 // Options is configurable aspects of a Logger
 type Options struct {

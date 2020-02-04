@@ -29,7 +29,7 @@ var (
 	boldStyle   = color.New(color.Bold).SprintFunc()
 	normalStyle = color.New(color.Reset).SprintFunc()
 
-	messageFormat     = "%15s | %v"
+	messageFormat     = "%15s - %v"
 	unformattedFormat = "%s\n"
 )
 
