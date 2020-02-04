@@ -1,7 +1,7 @@
 package log
 
 import (
-	golog "log"
+	stdlog "log"
 
 	"github.com/arknable/errors"
 )
@@ -9,7 +9,7 @@ import (
 func init() {
 	l, err := New(nil)
 	if err != nil {
-		golog.Fatal(errors.Wrap(err))
+		stdlog.Fatal(errors.Wrap(err))
 	}
 	logger = l
 }

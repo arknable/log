@@ -3,7 +3,7 @@ package log
 import (
 	"fmt"
 	"io"
-	golog "log"
+	stdlog "log"
 	"os"
 	"path/filepath"
 	"sync"
@@ -34,7 +34,7 @@ type Options struct {
 
 // Logger is a wrapper for Go's standard logger
 type Logger struct {
-	*golog.Logger
+	*stdlog.Logger
 	Options
 
 	lock               sync.Mutex
@@ -53,7 +53,7 @@ func New(opts *Options) (*Logger, error) {
 	if err != nil {
 		return nil, errors.Wrap(err)
 	}
-	l.Logger = golog.New(writers, "", golog.LstdFlags)
+	l.Logger = stdlog.New(writers, "", stdlog.LstdFlags)
 	return l, nil
 }
 
