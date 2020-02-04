@@ -10,3 +10,5 @@ require (
 	golang.org/x/tools v0.0.0-20191108194844-46f05828f2fe
 	golang.org/x/tools/gopls v0.2.1 // indirect
 )
+
+go 1.13
