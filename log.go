@@ -6,30 +6,12 @@ import (
 	"github.com/arknable/errors"
 )
 
-// Default logger
-var logger *Logger
-
 func init() {
 	l, err := New(nil)
 	if err != nil {
 		golog.Fatal(errors.Wrap(err))
 	}
 	logger = l
-}
-
-// Default returns default logger
-func Default() *Logger {
-	return logger
-}
-
-// NewDefault creates new default logger
-func NewDefault(opts *Options) error {
-	l, err := New(opts)
-	if err != nil {
-		return errors.Wrap(err)
-	}
-	logger = l
-	return nil
 }
 
 // Debugf is bridge for Logger.Debugf of default logger
