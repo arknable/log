@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/arknable/errors"
-	"github.com/fatih/color"
 )
 
 // Level is the level of this message
@@ -24,12 +23,6 @@ const (
 	FatalLevel   = "FATAL"
 )
 
-var (
-	italicStyle = color.New(color.Italic).SprintFunc()
-	boldStyle   = color.New(color.Bold).SprintFunc()
-	normalStyle = color.New(color.Reset).SprintFunc()
-)
-
 // Prints log message with given format and level
 func (l *Logger) write(level Level, format string, v ...interface{}) {
 	if level == FatalLevel {
@@ -46,15 +39,7 @@ func (l *Logger) write(level Level, format string, v ...interface{}) {
 			l.SetOutput(writers)
 		}
 	}
-
-	levelString := normalStyle(level.String())
-	if level == ErrorLevel || level == FatalLevel {
-		levelString = boldStyle(level.String())
-	} else if level == DebugLevel {
-		levelString = italicStyle(level.String())
-	}
-
 	msg := fmt.Sprintf(format, v...)
-	l.Printf("%15s - %v\n", levelString, msg)
+	l.Printf("%15s - %v\n", level.String(), msg)
 
 }
