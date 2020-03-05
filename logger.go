@@ -87,7 +87,7 @@ func (l *Logger) Debugf(format string, v ...interface{}) {
 
 // Debug prints debug message
 func (l *Logger) Debug(v ...interface{}) {
-	l.Println(v...)
+	l.writeln(DebugLevel, v...)
 }
 
 // Infof prints info message with given format
@@ -97,7 +97,7 @@ func (l *Logger) Infof(format string, v ...interface{}) {
 
 // Info prints info message
 func (l *Logger) Info(v ...interface{}) {
-	l.Println(v...)
+	l.writeln(InfoLevel, v...)
 }
 
 // Warningf prints warning message with given format
@@ -107,7 +107,7 @@ func (l *Logger) Warningf(format string, v ...interface{}) {
 
 // Warning prints Warning message
 func (l *Logger) Warning(v ...interface{}) {
-	l.Println(v...)
+	l.writeln(WarningLevel, v...)
 }
 
 // Errorf prints error message with given format
@@ -117,7 +117,7 @@ func (l *Logger) Errorf(format string, v ...interface{}) {
 
 // Error prints error message
 func (l *Logger) Error(v ...interface{}) {
-	l.Println(v...)
+	l.writeln(ErrorLevel, v...)
 }
 
 // Fatalf prints fatal message with given format
@@ -127,7 +127,7 @@ func (l *Logger) Fatalf(format string, v ...interface{}) {
 
 // Fatal prints fatal message
 func (l *Logger) Fatal(v ...interface{}) {
-	l.Println(v...)
+	l.writeln(FatalLevel, v...)
 }
 
 // Logf mapped to Infof for compatibility with Segment's Logger
