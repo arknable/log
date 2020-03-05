@@ -30,7 +30,7 @@ func (l *Logger) write(level Level, format string, v ...interface{}) {
 	}
 
 	msg := []interface{}{
-		messageHeader(level),
+		header(level),
 		fmt.Sprintf(format, v...),
 	}
 	l.Println(msg...)
@@ -46,7 +46,7 @@ func (l *Logger) writeln(level Level, v ...interface{}) {
 	}
 
 	msg := []interface{}{
-		messageHeader(level),
+		header(level),
 	}
 	l.Println(append(msg, v...)...)
 
@@ -69,6 +69,6 @@ func (l *Logger) checkFileOutput() error {
 	return nil
 }
 
-func messageHeader(level Level) string {
+func header(level Level) string {
 	return fmt.Sprintf("%7s", level.String())
 }
