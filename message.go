@@ -16,11 +16,20 @@ func (l Level) String() string {
 }
 
 const (
-	DebugLevel   = "DEBUG"
-	InfoLevel    = "INFO"
+	// DebugLevel informs information for debugging purpose
+	DebugLevel = "DEBUG"
+
+	// InfoLevel informs that there is a useful information
+	InfoLevel = "INFO"
+
+	// WarningLevel informs that we need to pay more attention on something
 	WarningLevel = "WARNING"
-	ErrorLevel   = "ERROR"
-	FatalLevel   = "FATAL"
+
+	// ErrorLevel informs that an error occured
+	ErrorLevel = "ERROR"
+
+	// FatalLevel informs that we are having a panic
+	FatalLevel = "FATAL"
 )
 
 // Prints log message with given format and level
