@@ -40,6 +40,6 @@ func (l *Logger) write(level Level, format string, v ...interface{}) {
 		}
 	}
 	msg := fmt.Sprintf(format, v...)
-	l.Printf("%15s - %v\n", level.String(), msg)
+	l.Printf("%7s - %v\n", level.String(), msg)
 
 }
