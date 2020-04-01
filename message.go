@@ -5,57 +5,79 @@ import (
 	"os"
 
 	"github.com/arknable/errors"
-	"github.com/fatih/color"
 )
 
-var (
-	colorDebug   = color.New(color.Italic).SprintFunc()
-	colorInfo    = color.New(color.Reset).SprintFunc()
-	colorWarning = color.New(color.Bold).SprintFunc()
-	colorError   = color.New(color.Bold).SprintFunc()
-	colorFatal   = color.New(color.Bold).SprintFunc()
+// Level is the level of this message
+type Level string
 
-	coloredFatalLevel = colorFatal(fatalLevel)
-
-	messageFormat     = "%15s | %v"
-	unformattedFormat = "%s\n"
-)
-
-type message struct {
-	IsFormatted bool
-	Format      string
-	Level       string
-	Message     string
+// String returns string representation of this level
+func (l Level) String() string {
+	return (string)(l)
 }
 
-// Prints log message with given format and level
-func (l *Logger) printf(level, format string, v ...interface{}) {
-	var (
-		msg       string
-		msgFormat = messageFormat
-	)
+const (
+	// DebugLevel informs information for debugging purpose
+	DebugLevel = "DEBUG"
 
-	if format == unformattedFormat {
-		msgFormat = msgFormat + "\n"
-		msg = fmt.Sprint(v...)
-	} else {
-		msg = fmt.Sprintf(format, v...)
+	// InfoLevel informs that there is a useful information
+	InfoLevel = "INFO"
+
+	// WarningLevel informs that we need to pay more attention on something
+	WarningLevel = "WARNING"
+
+	// ErrorLevel informs that an error occured
+	ErrorLevel = "ERROR"
+
+	// FatalLevel informs that we are having a panic
+	FatalLevel = "FATAL"
+)
+
+// Prints log message with given format and level
+func (l *Logger) write(level Level, format string, v ...interface{}) {
+	if err := l.checkFileOutput(); err != nil {
+		l.Logger.Fatal(errors.Wrap(err))
 	}
 
+	msg := []interface{}{
+		header(level),
+		fmt.Sprintf(format, v...),
+	}
+	l.Println(msg...)
+
+	if level == FatalLevel {
+		os.Exit(1)
+	}
+}
+
+func (l *Logger) writeln(level Level, v ...interface{}) {
+	if err := l.checkFileOutput(); err != nil {
+		l.Logger.Fatal(errors.Wrap(err))
+	}
+
+	msg := []interface{}{
+		header(level),
+	}
+	l.Println(append(msg, v...)...)
+
+	if level == FatalLevel {
+		os.Exit(1)
+	}
+}
+
+func (l *Logger) checkFileOutput() error {
 	if l.EnableFileOutput {
-		fname := fileName(l)
-		if fname != l.currentFileOutName {
+		filename := fileName(l)
+		if filename != l.currentFileOutName {
 			writers, err := l.writers()
 			if err != nil {
-				Fatal(errors.Wrap(err))
+				return errors.Wrap(err)
 			}
 			l.SetOutput(writers)
 		}
 	}
+	return nil
+}
 
-	l.Printf(msgFormat, level, msg)
-
-	if level == coloredFatalLevel {
-		os.Exit(1)
-	}
+func header(level Level) string {
+	return fmt.Sprintf("%7s", level.String())
 }

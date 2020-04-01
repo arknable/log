@@ -3,19 +3,15 @@ package log
 import (
 	"fmt"
 	"io"
-	golog "log"
+	stdlog "log"
 	"os"
 	"path/filepath"
-	"sync"
 	"time"
 
 	"github.com/arknable/errors"
 )
 
-const (
-	fileOutputExt = ".log"
-	fatalLevel    = "FATAL"
-)
+const fileOutputExt = ".log"
 
 // Options is configurable aspects of a Logger
 type Options struct {
@@ -34,10 +30,8 @@ type Options struct {
 
 // Logger is a wrapper for Go's standard logger
 type Logger struct {
-	*golog.Logger
+	*stdlog.Logger
 	Options
-
-	lock               sync.Mutex
 	currentFileOutName string
 }
 
@@ -53,7 +47,7 @@ func New(opts *Options) (*Logger, error) {
 	if err != nil {
 		return nil, errors.Wrap(err)
 	}
-	l.Logger = golog.New(writers, "", golog.LstdFlags)
+	l.Logger = stdlog.New(writers, "", stdlog.LstdFlags)
 	return l, nil
 }
 
@@ -85,52 +79,52 @@ func fileName(l *Logger) string {
 
 // Debugf prints debug message with given format
 func (l *Logger) Debugf(format string, v ...interface{}) {
-	l.printf(colorDebug("DEBUG"), format, v...)
+	l.write(DebugLevel, format, v...)
 }
 
 // Debug prints debug message
 func (l *Logger) Debug(v ...interface{}) {
-	l.Debugf(unformattedFormat, v...)
+	l.writeln(DebugLevel, v...)
 }
 
 // Infof prints info message with given format
 func (l *Logger) Infof(format string, v ...interface{}) {
-	l.printf(colorInfo("INFO"), format, v...)
+	l.write(InfoLevel, format, v...)
 }
 
 // Info prints info message
 func (l *Logger) Info(v ...interface{}) {
-	l.Infof(unformattedFormat, v...)
+	l.writeln(InfoLevel, v...)
 }
 
 // Warningf prints warning message with given format
 func (l *Logger) Warningf(format string, v ...interface{}) {
-	l.printf(colorWarning("WARNING"), format, v...)
+	l.write(WarningLevel, format, v...)
 }
 
 // Warning prints Warning message
 func (l *Logger) Warning(v ...interface{}) {
-	l.Warningf(unformattedFormat, v...)
+	l.writeln(WarningLevel, v...)
 }
 
 // Errorf prints error message with given format
 func (l *Logger) Errorf(format string, v ...interface{}) {
-	l.printf(colorError("ERROR"), format, v...)
+	l.write(ErrorLevel, format, v...)
 }
 
 // Error prints error message
 func (l *Logger) Error(v ...interface{}) {
-	l.Errorf(unformattedFormat, v...)
+	l.writeln(ErrorLevel, v...)
 }
 
 // Fatalf prints fatal message with given format
 func (l *Logger) Fatalf(format string, v ...interface{}) {
-	l.printf(colorFatal(fatalLevel), format, v...)
+	l.write(FatalLevel, format, v...)
 }
 
 // Fatal prints fatal message
 func (l *Logger) Fatal(v ...interface{}) {
-	l.Fatalf(unformattedFormat, v...)
+	l.writeln(FatalLevel, v...)
 }
 
 // Logf mapped to Infof for compatibility with Segment's Logger

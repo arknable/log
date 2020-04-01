@@ -11,9 +11,9 @@ import (
 
 func testLog(l *Logger) {
 	l.Debug("This is a debug message")
-	l.Info("This is", " an info message")
+	l.Info("This is", "an info message")
 	l.Warning("This is a warning message")
-	l.Error("This is", " an error message")
+	l.Error("This is", "an error message")
 
 	l.Debugf("This is a %s message", "debugf")
 	l.Infof("This is an %s message", "infof")
