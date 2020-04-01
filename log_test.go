@@ -23,8 +23,8 @@ func testLog(l *Logger) {
 
 func TestFileOutput(t *testing.T) {
 	l, err := New(&Options{
-		EnableFileOutput: true,
-		FileOutputName:   "test",
+		EnableFileOut: true,
+		FileOutName:   "test",
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -35,7 +35,7 @@ func TestFileOutput(t *testing.T) {
 			t.Fatal(err)
 		}
 		for _, f := range files {
-			if strings.HasPrefix(f.Name(), l.FileOutputName) {
+			if strings.HasPrefix(f.Name(), l.FileOutName) {
 				os.Remove(f.Name())
 			}
 		}
@@ -45,15 +45,15 @@ func TestFileOutput(t *testing.T) {
 
 func TestFileOutputFolder(t *testing.T) {
 	l, err := New(&Options{
-		EnableFileOutput: true,
-		FileOutputFolder: "log",
-		FileOutputName:   "test",
+		EnableFileOut: true,
+		FileOutFolder: "log",
+		FileOutName:   "test",
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer func() {
-		if err := os.RemoveAll(l.FileOutputFolder); err != nil {
+		if err := os.RemoveAll(l.FileOutFolder); err != nil {
 			t.Fatal(err)
 		}
 	}()
@@ -61,21 +61,21 @@ func TestFileOutputFolder(t *testing.T) {
 }
 
 func TestNewDefault(t *testing.T) {
-	assert.False(t, logger.DisableStdOutput)
-	assert.False(t, logger.EnableFileOutput)
-	assert.Equal(t, "", logger.FileOutputFolder)
-	assert.Equal(t, "", logger.FileOutputName)
+	assert.False(t, logger.DisableStdOut)
+	assert.False(t, logger.EnableFileOut)
+	assert.Equal(t, "", logger.FileOutFolder)
+	assert.Equal(t, "", logger.FileOutName)
 
 	err := NewDefault(&Options{
-		DisableStdOutput: true,
-		FileOutputFolder: "foolder",
-		FileOutputName:   "foo",
+		DisableStdOut: true,
+		FileOutFolder: "foolder",
+		FileOutName:   "foo",
 	})
 	assert.Nil(t, err)
-	assert.True(t, logger.DisableStdOutput)
-	assert.False(t, logger.EnableFileOutput)
-	assert.Equal(t, "foolder", logger.FileOutputFolder)
-	assert.Equal(t, "foo", logger.FileOutputName)
+	assert.True(t, logger.DisableStdOut)
+	assert.False(t, logger.EnableFileOut)
+	assert.Equal(t, "foolder", logger.FileOutFolder)
+	assert.Equal(t, "foo", logger.FileOutName)
 }
 
 /* Manual tests */
@@ -87,9 +87,9 @@ func TestNewDefault(t *testing.T) {
 
 // func TestDailyFileChange(t *testing.T) {
 // 	l, err := New(Options{
-// 		EnableFileOutput: true,
-// 		FileOutputFolder: "log",
-// 		FileOutputName:   "test",
+// 		EnableFileOut: true,
+// 		FileOutFolder: "log",
+// 		FileOutName:   "test",
 // 	})
 // 	if err != nil {
 // 		t.Fatal(err)

@@ -65,7 +65,7 @@ func (l *Logger) writeln(level Level, v ...interface{}) {
 }
 
 func (l *Logger) checkFileOutput() error {
-	if l.EnableFileOutput {
+	if l.EnableFileOut {
 		filename := fileName(l)
 		if filename != l.currentFileOutName {
 			writers, err := l.writers()
