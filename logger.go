@@ -6,7 +6,6 @@ import (
 	stdlog "log"
 	"os"
 	"path/filepath"
-	"sync"
 	"time"
 
 	"github.com/arknable/errors"
@@ -33,8 +32,6 @@ type Options struct {
 type Logger struct {
 	*stdlog.Logger
 	Options
-
-	lock               sync.Mutex
 	currentFileOutName string
 }
 
