@@ -1,11 +1,13 @@
 package log
 
 import (
+	"bufio"
+	"compress/gzip"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 // ErrFileNotOpened occurs when log
@@ -58,18 +60,9 @@ func (w *FileWriter) Write(p []byte) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	if inf.Size() > w.RotationSize {
-		if err = w.file.Sync(); err != nil {
-			return 0, err
-		}
-		if err = w.file.Close(); err != nil {
-			return 0, err
-		}
 
-		if err = os.Rename(w.filePath, fmt.Sprintf("%s.%s", w.filePath, time.Now().Format("2006Jan2_150405"))); err != nil {
-			return 0, err
-		}
-		if err := w.createNewFile(); err != nil {
+	if inf.Size() > w.RotationSize {
+		if err = w.archive(); err != nil {
 			return 0, err
 		}
 	}
@@ -85,12 +78,46 @@ func (w *FileWriter) Close() error {
 	return nil
 }
 
-func (w *FileWriter) createNewFile() error {
-	w.filePath = filepath.Join(w.Directory, fmt.Sprintf("%s.%s", w.Name, w.Extension))
-	file, err := os.OpenFile(w.filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+func (w *FileWriter) archive() error {
+	files, err := filepath.Glob(fmt.Sprintf("%s*", filepath.Join(w.Directory, w.Name)))
 	if err != nil {
 		return err
 	}
+	fileName := fmt.Sprintf("%s.%d.gz", filepath.Join(w.Directory, w.Name), len(files))
+	file, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	defer close(file)
+
+	writer := gzip.NewWriter(file)
+	defer close(writer)
+
+	buffer := make([]byte, 1<<10)
+	if _, err = w.file.Seek(0, 0); err != nil {
+		return err
+	}
+	if _, err = io.CopyBuffer(writer, bufio.NewReader(w.file), buffer); err != nil {
+		return err
+	}
+
+	if err = w.file.Close(); err != nil {
+		return err
+	}
+	if err = os.Remove(w.filePath); err != nil {
+		return err
+	}
+
+	return w.createNewFile()
+}
+
+func (w *FileWriter) createNewFile() error {
+	filePath := filepath.Join(w.Directory, fmt.Sprintf("%s.%s", w.Name, w.Extension))
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	w.filePath = filePath
 	w.file = file
 	return nil
 }
