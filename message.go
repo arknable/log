@@ -3,8 +3,6 @@ package log
 import (
 	"fmt"
 	"os"
-
-	"github.com/arknable/errors"
 )
 
 // Level is the level of this message
@@ -17,27 +15,23 @@ func (l Level) String() string {
 
 const (
 	// DebugLevel informs information for debugging purpose
-	DebugLevel = "DEBUG"
+	DebugLevel = "DBG"
 
 	// InfoLevel informs that there is a useful information
-	InfoLevel = "INFO"
+	InfoLevel = "INF"
 
 	// WarningLevel informs that we need to pay more attention on something
-	WarningLevel = "WARNING"
+	WarningLevel = "WRN"
 
 	// ErrorLevel informs that an error occured
-	ErrorLevel = "ERROR"
+	ErrorLevel = "ERR"
 
 	// FatalLevel informs that we are having a panic
-	FatalLevel = "FATAL"
+	FatalLevel = "FTL"
 )
 
 // Prints log message with given format and level
 func (l *Logger) write(level Level, format string, v ...interface{}) {
-	if err := l.checkFileOutput(); err != nil {
-		l.Logger.Fatal(errors.Wrap(err))
-	}
-
 	msg := []interface{}{
 		header(level),
 		fmt.Sprintf(format, v...),
@@ -50,10 +44,6 @@ func (l *Logger) write(level Level, format string, v ...interface{}) {
 }
 
 func (l *Logger) writeln(level Level, v ...interface{}) {
-	if err := l.checkFileOutput(); err != nil {
-		l.Logger.Fatal(errors.Wrap(err))
-	}
-
 	msg := []interface{}{
 		header(level),
 	}
@@ -64,20 +54,6 @@ func (l *Logger) writeln(level Level, v ...interface{}) {
 	}
 }
 
-func (l *Logger) checkFileOutput() error {
-	if l.EnableFileOut {
-		filename := fileName(l)
-		if filename != l.currentFileOutName {
-			writers, err := l.writers()
-			if err != nil {
-				return errors.Wrap(err)
-			}
-			l.SetOutput(writers)
-		}
-	}
-	return nil
-}
-
 func header(level Level) string {
-	return fmt.Sprintf("%7s", level.String())
+	return fmt.Sprintf("[%3s]", level.String())
 }
