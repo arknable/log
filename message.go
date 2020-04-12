@@ -17,19 +17,19 @@ func (l Level) String() string {
 
 const (
 	// DebugLevel informs information for debugging purpose
-	DebugLevel = "DEBUG"
+	DebugLevel = "DBG"
 
 	// InfoLevel informs that there is a useful information
-	InfoLevel = "INFO"
+	InfoLevel = "INF"
 
 	// WarningLevel informs that we need to pay more attention on something
-	WarningLevel = "WARNING"
+	WarningLevel = "WRN"
 
 	// ErrorLevel informs that an error occured
-	ErrorLevel = "ERROR"
+	ErrorLevel = "ERR"
 
 	// FatalLevel informs that we are having a panic
-	FatalLevel = "FATAL"
+	FatalLevel = "FTL"
 )
 
 // Prints log message with given format and level
@@ -79,5 +79,5 @@ func (l *Logger) checkFileOutput() error {
 }
 
 func header(level Level) string {
-	return fmt.Sprintf("%7s", level.String())
+	return fmt.Sprintf("[%3s]", level.String())
 }
