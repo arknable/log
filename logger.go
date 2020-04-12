@@ -18,7 +18,6 @@ type Options struct {
 type Logger struct {
 	*stdlog.Logger
 	Options
-	currentFileOutName string
 }
 
 // New creates new logger
