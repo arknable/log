@@ -1,31 +1,17 @@
 package log
 
 import (
-	"fmt"
 	"io"
 	stdlog "log"
 	"os"
-	"path/filepath"
-	"time"
 
 	"github.com/arknable/errors"
 )
-
-const fileOutputExt = ".log"
 
 // Options is configurable aspects of a Logger
 type Options struct {
 	// DisableStdOut removes standard output
 	DisableStdOut bool
-
-	// EnableFileOut writes message to file
-	EnableFileOut bool
-
-	// FileOutFolder is path to folder where log files should be kept
-	FileOutFolder string
-
-	// FileOutName is the name of log file
-	FileOutName string
 }
 
 // Logger is a wrapper for Go's standard logger
@@ -56,25 +42,7 @@ func (l *Logger) writers() (io.Writer, error) {
 	if !l.DisableStdOut {
 		w = append(w, os.Stdout)
 	}
-	if l.EnableFileOut {
-		if len(l.FileOutFolder) > 0 {
-			if err := os.MkdirAll(l.FileOutFolder, os.ModePerm); err != nil {
-				return nil, errors.Wrap(err)
-			}
-		}
-		l.currentFileOutName = fileName(l)
-		filePath := filepath.Join(l.FileOutFolder, l.currentFileOutName)
-		file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-		if err != nil {
-			return nil, errors.Wrap(err)
-		}
-		w = append(w, file)
-	}
 	return io.MultiWriter(w...), nil
-}
-
-func fileName(l *Logger) string {
-	return fmt.Sprintf("%s_%s%s", l.FileOutName, time.Now().Format("20060102"), fileOutputExt)
 }
 
 // Debugf prints debug message with given format

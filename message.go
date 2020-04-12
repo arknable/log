@@ -3,8 +3,6 @@ package log
 import (
 	"fmt"
 	"os"
-
-	"github.com/arknable/errors"
 )
 
 // Level is the level of this message
@@ -34,10 +32,6 @@ const (
 
 // Prints log message with given format and level
 func (l *Logger) write(level Level, format string, v ...interface{}) {
-	if err := l.checkFileOutput(); err != nil {
-		l.Logger.Fatal(errors.Wrap(err))
-	}
-
 	msg := []interface{}{
 		header(level),
 		fmt.Sprintf(format, v...),
@@ -50,10 +44,6 @@ func (l *Logger) write(level Level, format string, v ...interface{}) {
 }
 
 func (l *Logger) writeln(level Level, v ...interface{}) {
-	if err := l.checkFileOutput(); err != nil {
-		l.Logger.Fatal(errors.Wrap(err))
-	}
-
 	msg := []interface{}{
 		header(level),
 	}
@@ -62,20 +52,6 @@ func (l *Logger) writeln(level Level, v ...interface{}) {
 	if level == FatalLevel {
 		os.Exit(1)
 	}
-}
-
-func (l *Logger) checkFileOutput() error {
-	if l.EnableFileOut {
-		filename := fileName(l)
-		if filename != l.currentFileOutName {
-			writers, err := l.writers()
-			if err != nil {
-				return errors.Wrap(err)
-			}
-			l.SetOutput(writers)
-		}
-	}
-	return nil
 }
 
 func header(level Level) string {
