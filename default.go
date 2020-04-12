@@ -1,5 +1,13 @@
 package log
 
+// Default defaultLogger.
+var defaultLogger = New()
+
+// SetDefaultLogger replaces default logger with given one.
+func SetDefaultLogger(l *Logger) {
+	defaultLogger = l
+}
+
 // Debugf is bridge for Logger.Debugf of default defaultLogger
 func Debugf(format string, v ...interface{}) {
 	defaultLogger.Debugf(format, v...)
