@@ -1,47 +1,26 @@
 package log
 
 import (
-	"io"
 	stdlog "log"
 	"os"
-
-	"github.com/arknable/errors"
 )
 
-// Options is configurable aspects of a Logger
-type Options struct {
-	// DisableStdOut removes standard output
-	DisableStdOut bool
-}
-
-// Logger is a wrapper for Go's standard logger
+// Logger is a wrapper for Go's standard defaultLogger
 type Logger struct {
-	*stdlog.Logger
-	Options
+	stdlog.Logger
+
+	// PrintToStdOut specifies that log message should be printed to standard out.
+	PrintToStdOut bool
 }
 
-// New creates new logger
-func New(opts *Options) (*Logger, error) {
-	l := &Logger{}
-	if opts != nil {
-		l.Options = *opts
-	} else {
-		l.Options = Options{}
+// New creates new defaultLogger
+func New() *Logger {
+	l := &Logger{
+		Logger: stdlog.Logger{},
 	}
-	writers, err := l.writers()
-	if err != nil {
-		return nil, errors.Wrap(err)
-	}
-	l.Logger = stdlog.New(writers, "", stdlog.LstdFlags)
-	return l, nil
-}
-
-func (l *Logger) writers() (io.Writer, error) {
-	w := make([]io.Writer, 0)
-	if !l.DisableStdOut {
-		w = append(w, os.Stdout)
-	}
-	return io.MultiWriter(w...), nil
+	l.SetOutput(os.Stdout)
+	l.SetFlags(stdlog.LstdFlags)
+	return l
 }
 
 // Debugf prints debug message with given format
