@@ -8,9 +8,6 @@ import (
 // Logger is a wrapper for Go's standard defaultLogger
 type Logger struct {
 	stdlog.Logger
-
-	// PrintToStdOut specifies that log message should be printed to standard out.
-	PrintToStdOut bool
 }
 
 // New creates new defaultLogger
