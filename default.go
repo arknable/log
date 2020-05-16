@@ -8,6 +8,11 @@ func SetDefaultLogger(l *Logger) {
 	defaultLogger = l
 }
 
+// DefaultLogger returns instance of default logger
+func DefaultLogger() *Logger {
+	return defaultLogger
+}
+
 // Debugf is bridge for Logger.Debugf of default defaultLogger
 func Debugf(format string, v ...interface{}) {
 	defaultLogger.Debugf(format, v...)
