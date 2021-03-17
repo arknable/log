@@ -1,8 +1,34 @@
 package log
 
 import (
+	"fmt"
 	stdlog "log"
 	"os"
+)
+
+// Level is the level of this message
+type Level string
+
+// String returns string representation of this level
+func (l Level) String() string {
+	return (string)(l)
+}
+
+const (
+	// DebugLevel informs information for debugging purpose
+	DebugLevel = "DEBUG"
+
+	// InfoLevel informs that there is a useful information
+	InfoLevel = "INFO"
+
+	// WarningLevel informs that we need to pay more attention on something
+	WarningLevel = "WARNING"
+
+	// ErrorLevel informs that an error occured
+	ErrorLevel = "ERROR"
+
+	// FatalLevel informs that we are having a panic
+	FatalLevel = "FATAL"
 )
 
 // Logger is a wrapper for Go's standard defaultLogger
@@ -47,7 +73,7 @@ func (l *Logger) Warningf(format string, v ...interface{}) {
 
 // Warning prints Warning message
 func (l *Logger) Warning(v ...interface{}) {
-	l.writeln(WarningLevel, v...)
+	l.write(WarningLevel, "%v\n", v...)
 }
 
 // Errorf prints error message with given format
@@ -73,4 +99,26 @@ func (l *Logger) Fatal(v ...interface{}) {
 // Logf mapped to Infof for compatibility with Segment's Logger
 func (l *Logger) Logf(format string, v ...interface{}) {
 	l.Infof(format, v...)
+}
+
+// Prints log message with given format and level
+func (l *Logger) write(level Level, format string, v ...interface{}) {
+	msg := fmt.Sprintf(format, v...)
+	l.Printf("%7s %s", level.String(), msg)
+
+	if level == FatalLevel {
+		os.Exit(1)
+	}
+}
+
+// Prints log message with given level
+func (l *Logger) writeln(level Level, v ...interface{}) {
+	msg := []interface{}{
+		fmt.Sprintf("%7s", level.String()),
+	}
+	l.Println(append(msg, v...)...)
+
+	if level == FatalLevel {
+		os.Exit(1)
+	}
 }

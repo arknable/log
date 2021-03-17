@@ -2,7 +2,7 @@ package log
 
 import "testing"
 
-func TestLogging(t *testing.T) {
+func TestDefaultLogger(t *testing.T) {
 	Debug("This is a debug message")
 	Info("This is", "an info message")
 	Warning("This is a warning message")
