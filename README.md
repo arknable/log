@@ -77,3 +77,15 @@ defer file.Close()
 logger := New()
 logger.SetOutput(io.MultiWriter(os.Stdout, file))
 ```
+
+## Sample Output
+```
+2021/03/23 05:35:19   DEBUG This is a debug message
+2021/03/23 05:35:19    INFO This is an info message
+2021/03/23 05:35:19 WARNING This is a warning message
+2021/03/23 05:35:19   ERROR This is an error message
+2021/03/23 05:35:19   DEBUG This is a debugf message
+2021/03/23 05:35:19    INFO This is an infof message
+2021/03/23 05:35:19 WARNING This is a warningf message
+2021/03/23 05:35:19   ERROR This is an errorf message
+```
