@@ -72,11 +72,6 @@ func (l *loggerImpl) Fatal(v ...interface{}) {
 	l.writeln(FatalLevel, v...)
 }
 
-// Logf mapped to Infof for compatibility with Segment's Logger
-func (l *loggerImpl) Logf(format string, v ...interface{}) {
-	l.Infof(format, v...)
-}
-
 // Prints log message with given format and level
 func (l *loggerImpl) write(level Level, format string, v ...interface{}) {
 	msg := fmt.Sprintf(format, v...)
