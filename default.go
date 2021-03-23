@@ -4,12 +4,12 @@ package log
 var defaultLogger = New()
 
 // SetDefaultLogger replaces default logger with given one.
-func SetDefaultLogger(l *Logger) {
+func SetDefaultLogger(l Logger) {
 	defaultLogger = l
 }
 
 // DefaultLogger returns instance of default logger
-func DefaultLogger() *Logger {
+func DefaultLogger() Logger {
 	return defaultLogger
 }
 

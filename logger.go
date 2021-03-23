@@ -1,76 +1,64 @@
 package log
 
-import (
-	stdlog "log"
-	"os"
+import "io"
+
+// Level is the level of this message
+type Level string
+
+// String returns string representation of this level
+func (l Level) String() string {
+	return (string)(l)
+}
+
+const (
+	// DebugLevel informs information for debugging purpose
+	DebugLevel = "DEBUG"
+
+	// InfoLevel informs that there is a useful information
+	InfoLevel = "INFO"
+
+	// WarningLevel informs that we need to pay more attention on something
+	WarningLevel = "WARNING"
+
+	// ErrorLevel informs that an error occured
+	ErrorLevel = "ERROR"
+
+	// FatalLevel informs that we are having a panic
+	FatalLevel = "FATAL"
 )
 
-// Logger is a wrapper for Go's standard defaultLogger
-type Logger struct {
-	stdlog.Logger
-}
+// Logger is required specification for a logger
+type Logger interface {
+	// Debug logs debug messages
+	Debug(v ...interface{})
 
-// New creates new defaultLogger
-func New() *Logger {
-	l := &Logger{
-		Logger: stdlog.Logger{},
-	}
-	l.SetOutput(os.Stdout)
-	l.SetFlags(stdlog.LstdFlags)
-	return l
-}
+	// Debugf logs formatted debug messages
+	Debugf(format string, v ...interface{})
 
-// Debugf prints debug message with given format
-func (l *Logger) Debugf(format string, v ...interface{}) {
-	l.write(DebugLevel, format, v...)
-}
+	// Info lofs info messages
+	Info(v ...interface{})
 
-// Debug prints debug message
-func (l *Logger) Debug(v ...interface{}) {
-	l.writeln(DebugLevel, v...)
-}
+	// Infof lofs formatted info messages
+	Infof(format string, v ...interface{})
 
-// Infof prints info message with given format
-func (l *Logger) Infof(format string, v ...interface{}) {
-	l.write(InfoLevel, format, v...)
-}
+	// Warning logs warning messages
+	Warning(v ...interface{})
 
-// Info prints info message
-func (l *Logger) Info(v ...interface{}) {
-	l.writeln(InfoLevel, v...)
-}
+	// Warningf logs formatted warning messages
+	Warningf(format string, v ...interface{})
 
-// Warningf prints warning message with given format
-func (l *Logger) Warningf(format string, v ...interface{}) {
-	l.write(WarningLevel, format, v...)
-}
+	// Error logs error messages
+	Error(v ...interface{})
 
-// Warning prints Warning message
-func (l *Logger) Warning(v ...interface{}) {
-	l.writeln(WarningLevel, v...)
-}
+	// Errorf logs formatted error messages
+	Errorf(format string, v ...interface{})
 
-// Errorf prints error message with given format
-func (l *Logger) Errorf(format string, v ...interface{}) {
-	l.write(ErrorLevel, format, v...)
-}
+	// Fatal logs fatal messages
+	Fatal(v ...interface{})
 
-// Error prints error message
-func (l *Logger) Error(v ...interface{}) {
-	l.writeln(ErrorLevel, v...)
-}
+	// Fatalf logs formatted fatal messages
+	Fatalf(format string, v ...interface{})
 
-// Fatalf prints fatal message with given format
-func (l *Logger) Fatalf(format string, v ...interface{}) {
-	l.write(FatalLevel, format, v...)
-}
-
-// Fatal prints fatal message
-func (l *Logger) Fatal(v ...interface{}) {
-	l.writeln(FatalLevel, v...)
-}
-
-// Logf mapped to Infof for compatibility with Segment's Logger
-func (l *Logger) Logf(format string, v ...interface{}) {
-	l.Infof(format, v...)
+	// SetOutput sets output writer
+	SetOutput(w io.Writer)
 }
