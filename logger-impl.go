@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"log"
 	stdlog "log"
 	"os"
 )
@@ -17,7 +18,7 @@ func New() Logger {
 		Logger: stdlog.Logger{},
 	}
 	l.SetOutput(os.Stdout)
-	l.SetFlags(stdlog.LstdFlags)
+	l.SetFlags(stdlog.LstdFlags | log.LUTC)
 	return l
 }
 
