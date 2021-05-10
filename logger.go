@@ -53,10 +53,10 @@ type Logger interface {
 	// Errorf logs formatted error messages
 	Errorf(format string, v ...interface{})
 
-	// Fatal logs fatal messages
+	// Fatal logs fatal messages and calls os.Exit(1)
 	Fatal(v ...interface{})
 
-	// Fatalf logs formatted fatal messages
+	// Fatalf logs formatted fatal messages and calls os.Exit(1)
 	Fatalf(format string, v ...interface{})
 
 	// SetOutput sets output writer
